@@ -6,6 +6,7 @@ from geometry_msgs.msg import (
 )
 import numpy
 from joint_action_client import Trajectory
+from birl_trajectory_excution._constant import limb_name
 
 
 def handle_object_in_gazebo_offset(pose_list):

@@ -13,3 +13,10 @@ find_package(catkin REQUIRED
 )
 
 catkin_python_setup()
+
+catkin_package(
+ CATKIN_DEPENDS trajectory_msgs sensor_msgs  std_msgs baxter_core_msgs smach actionlib)
+
+ include_directories(
+  ${catkin_INCLUDE_DIRS}
+)
