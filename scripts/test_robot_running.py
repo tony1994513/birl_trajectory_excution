@@ -34,9 +34,11 @@ class MoveToHoverPosition(smach.State):
 
         rospy.loginfo("dmp start pose is %s\n" %start[0:3])
         rospy.loginfo("dmp end pose is %s\n" %end[0:3] )
-
-        # joint_plan_list = planner(start, end, planner_type="dmp",phase=1)
+        
+        # joint_plan_list = planner(start, end, planner_type="dmp",phase=1,orig_demo_mode=True)
+        # ipdb.set_trace()
         # moving_trajectory_mode(joint_plan_list,gripper_state="open")
+
         joint = planner(start, end, planner_type="cart_trajectory_action_server")
         moving_point_mode(joint)
         return "succuss"

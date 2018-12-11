@@ -38,6 +38,7 @@ def moving_trajectory_mode(command_angles,gripper_state="open"):
     rospy.loginfo("Moving trajectory mode\n")
 
     if gripper_state == "open":
+        rospy.sleep(0.3)
         traj.gripper_open()
 
     elif gripper_state == "close":
