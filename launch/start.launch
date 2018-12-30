@@ -1,0 +1,5 @@
+<launch>
+<node name="joint_trajectory_action_server" pkg="baxter_interface" type="joint_trajectory_action_server.py"  output="screen" />
+<node name="move_r_arm_home" pkg="birl_trajectory_excution" type="move_r_arm_home.py"  output="screen" />
+<include file="$(find trac_ik_baxter)/launch/baxter_ft_ik_server.launch" />
+</launch>
