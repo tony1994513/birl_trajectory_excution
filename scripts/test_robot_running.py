@@ -13,6 +13,12 @@ from birl_kitting_experiment_simulation.gazebo_model_util import get_model_pose
 from birl_trajectory_excution.utils import get_current_pose_list
 from birl_trajectory_excution.robot_runing_mode import moving_point_mode, moving_trajectory_mode
 
+limb = "right"
+speed = 0.5
+running_mode = "point" #option: point, trajectory
+preplace_pose = [0.19, -0.8, 0.3, 1, 0, 0, 0]
+place_pose = [0.19, -0.8, -0.105, 1, 0, 0, 0]
+planner_type = "cart_trajectory_action_server"
 
 class MoveToReadyPose(smach.State):
     def __init__(self):
@@ -20,7 +26,11 @@ class MoveToReadyPose(smach.State):
 
     def execute(self, userdata):
         ready_pose = [ 0.03681553890924993, -0.9836651802315216,0.2515728492132078, 1.1443496677625187, -0.1054611791671222, 1.3698448435816746, -0.5744758050630875]
-        moving_point_mode(ready_pose)
+        if running_mode == "point":
+            moving_point_mode(point=ready_pose,limb=limb,speed=speed ,gripper_state="open")
+        elif running_mode == "trajectory":
+            pass
+            # moving_trajectory_mode(command_angles,gripper_state="open")
         return "succuss"
 
 class MoveToHoverPosition(smach.State):
@@ -31,16 +41,12 @@ class MoveToHoverPosition(smach.State):
 
         start = get_current_pose_list()
         end =   get_model_pose("box_male",hover_flag=True)
-
-        rospy.loginfo("dmp start pose is %s\n" %start[0:3])
-        rospy.loginfo("dmp end pose is %s\n" %end[0:3] )
         
-        # joint_plan_list = planner(start, end, planner_type="dmp",phase=1,orig_demo_mode=True)
-        # ipdb.set_trace()
-        # moving_trajectory_mode(joint_plan_list,gripper_state="open")
-
-        joint = planner(start, end, planner_type="cart_trajectory_action_server")
-        moving_point_mode(joint)
+        joint = planner(start, end, limb=limb,planner_type=planner_type,point_mode=True)
+        if running_mode == "point":
+            moving_point_mode(point=joint,limb=limb,speed=speed ,gripper_state="open")
+        elif running_mode == "trajectory":
+            pass
         return "succuss"
 
 class MoveToPickPosition(smach.State):
@@ -51,14 +57,11 @@ class MoveToPickPosition(smach.State):
    
         start = get_current_pose_list()
         end = get_model_pose("box_male")
-        rospy.loginfo("dmp start pose is %s\n" %start[0:3])
-        rospy.loginfo("dmp end pose is %s\n" %end[0:3] )
-
-        # joint_plan_list = planner(start, end, planner_type="dmp",phase=2)
-        # moving_trajectory_mode(joint_plan_list,gripper_state="open")
-
-        joint = planner(start, end, planner_type="cart_trajectory_action_server")
-        moving_point_mode(joint,gripper_state="close")
+        joint = planner(start, end, limb=limb,planner_type=planner_type,point_mode=True)
+        if running_mode == "point":
+            moving_point_mode(point=joint,limb=limb,speed=speed,gripper_state="close")
+        elif running_mode == "trajectory":
+            pass
         return "succuss"
         
 class BackToPrePickPosition(smach.State):
@@ -69,14 +72,11 @@ class BackToPrePickPosition(smach.State):
 
         start = get_current_pose_list()
         end = get_model_pose("box_male",hover_flag=True)
-        rospy.loginfo("dmp start pose is %s\n" %start[0:3])
-        rospy.loginfo("dmp end pose is %s\n" %end[0:3] )
-
-        # joint_plan_list = planner(start, end, planner_type="dmp",phase=3)
-        # moving_trajectory_mode(joint_plan_list,gripper_state="open")
-
-        joint = planner(start, end, planner_type="cart_trajectory_action_server")
-        moving_point_mode(joint,gripper_state="close")
+        joint = planner(start, end, limb=limb,planner_type=planner_type,point_mode=True)
+        if running_mode == "point":
+            moving_point_mode(point=joint,limb=limb,speed=speed,gripper_state="close")
+        elif running_mode == "trajectory":
+            pass
         return "succuss"
 
 class MoveToPrePlacePosition(smach.State):
@@ -84,17 +84,11 @@ class MoveToPrePlacePosition(smach.State):
         smach.State.__init__(self, outcomes=['succuss'])
 
     def execute(self, userdata):
-
         start = get_current_pose_list()
-        end = _constant.preplace_pose
-        rospy.loginfo("dmp start pose is %s\n" %start[0:3])
-        rospy.loginfo("dmp end pose is %s\n" %end[0:3] )
-
-        # joint_plan_list = planner(start, end, planner_type="dmp",phase=4)
-        # moving_trajectory_mode(joint_plan_list,gripper_state="open")
-
-        joint = planner(start, end, planner_type="cart_trajectory_action_server")
-        moving_point_mode(joint,gripper_state="close")
+        end = preplace_pose
+        joint = planner(start, end, limb=limb,planner_type=planner_type,point_mode=True)
+        if running_mode == "point":
+            moving_point_mode(point=joint,limb=limb,speed=speed,gripper_state="close")
         return "succuss"
 
 class MoveToPlacePosition(smach.State):
@@ -102,17 +96,11 @@ class MoveToPlacePosition(smach.State):
         smach.State.__init__(self, outcomes=['succuss'])
 
     def execute(self, userdata):
-
         start = get_current_pose_list()
-        end = _constant.place_pose
-        rospy.loginfo("dmp start pose is %s\n" %start[0:3])
-        rospy.loginfo("dmp end pose is %s\n" %end[0:3] )
-
-        # joint_plan_list = planner(start, end, planner_type="dmp",phase=4)
-        # moving_trajectory_mode(joint_plan_list,gripper_state="open")
-
-        joint = planner(start, end, planner_type="cart_trajectory_action_server")
-        moving_point_mode(joint)
+        end = place_pose
+        joint = planner(start, end, limb=limb,planner_type=planner_type,point_mode=True)
+        if running_mode == "point":
+            moving_point_mode(point=joint,limb=limb,speed=speed,gripper_state="open")
         return "succuss"
 
 class BackToPrePlacePosition(smach.State):
@@ -120,17 +108,11 @@ class BackToPrePlacePosition(smach.State):
         smach.State.__init__(self, outcomes=['succuss'])
 
     def execute(self, userdata):
-
         start = get_current_pose_list()
-        end = _constant.preplace_pose
-        rospy.loginfo("dmp start pose is %s\n" %start[0:3])
-        rospy.loginfo("dmp end pose is %s\n" %end[0:3] )
-
-        # joint_plan_list = planner(start, end, planner_type="dmp",phase=4)
-        # moving_trajectory_mode(joint_plan_list,gripper_state="open")
-
-        joint = planner(start, end, planner_type="cart_trajectory_action_server")
-        moving_point_mode(joint)
+        end = preplace_pose
+        joint = planner(start, end, limb=limb,planner_type=planner_type,point_mode=True)
+        if running_mode == "point":
+            moving_point_mode(point=joint,limb=limb,speed=speed,gripper_state="open")
         return "succuss"
 
 class MoveBackToReadyPose(smach.State):
@@ -139,7 +121,8 @@ class MoveBackToReadyPose(smach.State):
 
     def execute(self, userdata):
         ready_pose = [ 0.03681553890924993, -0.9836651802315216,0.2515728492132078, 1.1443496677625187, -0.1054611791671222, 1.3698448435816746, -0.5744758050630875]
-        moving_point_mode(ready_pose)
+        if running_mode == "point":
+            moving_point_mode(point=ready_pose,limb=limb,speed=speed,gripper_state="open")
         return "succuss"
 
 def main():

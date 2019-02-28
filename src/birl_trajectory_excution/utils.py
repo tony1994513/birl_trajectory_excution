@@ -6,7 +6,7 @@ from geometry_msgs.msg import (
 )
 import numpy
 from joint_action_client import Trajectory
-from birl_trajectory_excution._constant import limb_name
+
 
 
 def handle_object_in_gazebo_offset(pose_list):
@@ -44,6 +44,7 @@ def filter_static_points(mat):
 def get_current_angle(limb="right"):
     traj = Trajectory(limb)
     limb_interface = traj._limb 
+    limb_name = [limb+'_s0', limb+'_s1', limb+'_e0', limb+'_e1', limb+'_w0', limb+'_w1', limb+'_w2'] 
     cur_angle = [limb_interface.joint_angle(joint) for joint in limb_name]
     return cur_angle
 

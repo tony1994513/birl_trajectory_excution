@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 from joint_action_client import Trajectory
 from utils import get_current_angle
-from _constant import limb,robot_runing_speed
 import rospy
 
 
-def moving_point_mode(point,gripper_state="open"):
+def moving_point_mode(point,limb=None,speed=None,gripper_state="open"):
     rospy.loginfo("Move point mode\n")
     traj = Trajectory(limb)
-    cur_angle = get_current_angle()
-    start_wait_time = traj.find_start_offset(point,cur_angle,speed=robot_runing_speed)
+    cur_angle = get_current_angle(limb)
+    start_wait_time = traj.find_start_offset(point,cur_angle,speed=speed)
     traj.clear(limb)
     traj.add_point(cur_angle, 0.0)
     traj.add_point(point,start_wait_time) 

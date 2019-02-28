@@ -45,7 +45,6 @@ from gazebo_msgs.srv import (
 import operator
 import baxter_interface
 import ipdb
-from _constant import robot_runing_speed,limb_name
 
 class Trajectory(object):
     def __init__(self, limb,verbose = False):
@@ -138,6 +137,7 @@ class Trajectory(object):
     def clear(self, limb):
         self._goal = FollowJointTrajectoryGoal()
         self._goal.goal_time_tolerance = self._goal_time_tolerance
+        limb_name = [limb+'_s0', limb+'_s1', limb+'_e0', limb+'_e1', limb+'_w0', limb+'_w1', limb+'_w2'] 
         self._goal.trajectory.joint_names = limb_name
 
     def gripper_open(self):
